@@ -24,7 +24,8 @@ class Http {
 
    request(url,options,(err,res,msg)=>{
      if(err) console.log(`hay un error ${err}`);
-     this.postHttp(JSON.parse(msg), callback);
+     if (!msg) console.log('Error de conexión con el servidor');
+     else this.postHttp(JSON.parse(msg), callback);
    });
   }
 }

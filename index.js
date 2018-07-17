@@ -34,6 +34,7 @@ o.now();
 let db= new Database(conf).getDB();
 
 
+
 db.getEmpresas((err,empresas)=>{
   if(err) console.log('Se ha producido un error:' + err);
   console.log('Datos obtenidos:' + empresas[0].DIRECCION);

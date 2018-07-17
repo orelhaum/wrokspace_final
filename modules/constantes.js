@@ -24,7 +24,8 @@ const CONSTANTES_CONF = {
   database_mongo_password:"database_mongo_password",
   database_mongo_name:"database_mongo_name",
   database_mongo_dbname:"database_mongo_dbname",
-
+  database_mongo_authentication:"database_mongo_authentication",
+  
   database_mysql_host : "database_mysql_host",
   database_mysql_port : "database_mysql_port",
   database_mysql_user : "database_mysql_user",

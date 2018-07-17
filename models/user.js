@@ -5,6 +5,72 @@ class UserModel{
   constructor(c){
     let conf = (c) ? c: new Configuracion('conf.json');
   }
+  static generateModel(mongoose){
+
+    let Schema = mongoose.Schema;
+
+    let schema = new Schema({
+      usuario : {
+        type: String
+      },
+      password : {
+        type: String
+      },
+      realCash : {
+        type: Number
+      },
+      activado : {
+        type: Boolean
+      },
+      tokenRegistro : {
+        type: String
+      },
+      baneado : {
+        type: Boolean
+      },
+      email : {
+        type: String
+      },
+      fechaNacimiento : {
+        type: Date
+      },
+      lenguaje : {
+        type: String
+      },
+      prefijoTelefonoMovil : {
+        type: Number
+      },
+      tipo : {
+        type: String
+      },
+      dni : {
+        type: String
+      },
+      tarjetaVisa : {
+        type: Number
+      }  ,
+      dniFot : {
+        type: String
+      },
+      loginip : {
+        type: String
+      },
+      registroIp : {
+        type: String
+      },
+      fechaultimoLogin : {
+        type: Date
+      },
+      ventas : {
+        type: [{
+          moneda
+        }]
+      },
+
+    },{collection:'users',versionKey: false });
+
+    return mongoose.module('User',schema);
+  }
   static createUser(req,callback){
 
     const db=req.variables.database;
