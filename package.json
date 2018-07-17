@@ -1,0 +1,42 @@
+{
+  "name": "workspace_server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cookie-session": "^2.0.0-beta.3",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "gulp-nodemon": "^2.2.1",
+    "i18n": "^0.8.3",
+    "js-sha3": "^0.7.0",
+    "mongodb": "^3.1.1",
+    "mqtt": "^2.18.2",
+    "mysql": "^2.15.0",
+    "node-ipc": "^9.1.1",
+    "node-windows": "^0.1.14",
+    "nodemailer": "^4.6.7",
+    "nodemon": "^1.17.5",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "pug": "^2.0.3",
+    "randomstring": "^1.1.5",
+    "redis": "^2.8.0",
+    "request": "^2.87.0",
+    "validator": "^10.4.0",
+    "websocket": "^1.0.26",
+    "ws": "^5.2.2",
+    "zlib": "^1.0.5"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-uglify-es": "^1.0.4"
+  }
+}
