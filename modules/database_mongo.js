@@ -3,7 +3,11 @@ const mongoose = require('mongoose');
 const MongoClient = require('mongodb').MongoClient;
 
 const { UserModel } = require('../models/user');
-const { CoinsModel,CoinModel,camposCoin } = require('../models/coin');
+const { FundsModel } = require('../models/funds');
+const { HistoricalModel } = require('../models/historical');
+const { CoinsModel } = require('../models/coins');
+const { CoinModel } = require('../models/coin');
+
 const { DatabaseBase } = require('./database_base');
 const { CONSTANTES_CONF } = require('./constantes');
 
@@ -26,65 +30,112 @@ class DatabaseMongo extends DatabaseBase {
       urlConnection = `mongodb://${database_mongo_user}:${database_mongo_password}@${database_mongo_host}:${database_mongo_port}/${this.database_mongo_dbname}?authMechanism=DEFAULT`;
     }
 
-
     mongoose.connect(urlConnection, { useNewUrlParser: true });
     this.client= mongoose.connection;
 
     this.modelCoins=CoinsModel.generateModel(mongoose);
     this.modelCoin=CoinModel.generateModel(mongoose);
+    this.modelFunds=FundsModel.generateModel(mongoose);
+    this.modelHistorical=HistoricalModel.generateModel(mongoose);
+    this.modelUser=UserModel.generateModel(mongoose);
   }
 
   setCoins(coins, callback) {
-    let monedas =  new this.modelCoins({coins});
-    monedas.save(function (err,monedas){
-      if (err) return console.error(err);
+    this.modelCoins.findOne((err,monedas)=>{
+      if (err) return callback(err);
+      if(!monedas) monedas =  new this.modelCoins({coins});
+      else monedas.set({coins});
 
-      if (callback) callback();
-    });
+      monedas.save((err)=>{
+        if (err) return callback(err);
+      });
+    })
   }
 
   getCoins( callback) {
-    this.modelCoins.find(function (err, coins) {
-      if (err) return console.error(err);
-
-      if (callback) callback(err,coins);
+    this.modelCoins.findOne(function (err, data) {
+      if (err) return callback(err);
+      if(data){
+        callback(err,data.coins);
+      }    
+      else{
+        callback(err,data);
+      }  
     });
   }
 
   setCoin(coin,dataCoin, callback) {
-    let datos={};
-
-      datos[camposCoin.highPrice]= dataCoin[camposCoin.highPrice]; 
-      datos[camposCoin.prevClosePrice]=dataCoin[camposCoin.prevClosePrice];
-      datos[camposCoin.bidPrice]=dataCoin[camposCoin.bidPrice];
-      datos[camposCoin.openPrice]=dataCoin[camposCoin.openPrice]; 
-      datos[camposCoin.askPrice]=dataCoin[camposCoin.askPrice];
-      datos[camposCoin.priceChangePercent ]=dataCoin[camposCoin.priceChangePercent];
-      datos[camposCoin.lastPrice]=dataCoin[camposCoin.lastPrice]; 
-      datos[camposCoin.weightedAvgPrice]=dataCoin[camposCoin.weightedAvgPrice]; 
-      datos[camposCoin.quoteVolume]=dataCoin[camposCoin.quoteVolume]; 
-      datos[camposCoin.priceChange]=dataCoin[camposCoin.priceChange]; 
-      datos[camposCoin.closeTime]=dataCoin[camposCoin.closeTime]; 
-      datos[camposCoin.volume]=dataCoin[camposCoin.volume]; 
-      datos[camposCoin.bidQty]=dataCoin[camposCoin.bidQty];
-      datos[camposCoin.symbol]=dataCoin[camposCoin.symbol]
     
-    let moneda =  new this.modelCoin(datos);
-    
-    moneda.save(function (err,monedas){
-      if (err) return console.error(err);
-
-      if (callback) callback();
+    this.modelCoin.findOne({symbol:coin}, (err, data)=> {
+      if (err) return callback(err); 
+      if(!data) {
+        data= new this.modelCoin(dataCoin);
+        data.date=new Date();
+      }
+      else data.set(dataCoin);
+      data.save((err)=>{
+        if (err) return callback(err);
+      });
     });
   }
 
   getCoin(coin, callback) {
-    this.modelCoin.find({symbol:coin},function (err, dataCoin) {
-      if (err) return console.error(err);
+    this.modelCoin.findOne({symbol:coin},callback);
+    /* xq recibe un callback donde tiene dos argumetnos, error y los datos y ademas los datos se devuelven tal cual los devuelve mongo
+    this.modelCoin.findOne({symbol:coin},function (err, dataCoin) {
+      if (err) return callback(err);
+      if (dataCoin) callback(err,dataCoin);
+    });
+    */
+  }
 
-      if (callback) callback(err,dataCoin);
+  setFunds(funds, callback) {
+    this.modelFunds.findOne((err,data)=>{
+      if (err) return callback(err);
+      if(!data) data =  new this.modelFunds(funds);
+      else data.set(funds);
+      data.date=new Date();
+      data.save((err)=>{
+        if (err) return callback(err);
+      });
+    })
+  }
+
+  getFunds( callback) {
+    this.modelFunds.findOne((err,data)=>{
+      if (err) return callback(err);
+      callback(err,data);
     });
   }
+
+  lenHistorical(coin, callback) {
+    //console.log('Método lenHistorical implementado');
+    this.modelHistorical.countDocuments({symbol:coin}, (err, longitud) => {
+      //console.log(longitud);
+      callback(err,longitud);
+    })
+  }
+
+  lpopHistorical(coin, callback) {
+    //console.log('Método lpopHistorical implementado');
+    this.modelHistorical.findOne({symbol : coin}).sort('date').exec((err,data)=>{
+      if (err) return callback(err);
+      if(data) data.remove((err)=>{
+        callback(err);
+      });
+    });
+  }
+  rpushHistorical(coin,coinData, callback) {
+    //console.log('Método rpushHistorical implementado');
+    if(coinData){
+      coinData.date=new Date();
+    }
+    let data = new this.modelHistorical(coinData);
+    data.save((err)=>{
+      callback(err);
+    });
+  }
+  
 }
 
 module.exports = { DatabaseMongo }

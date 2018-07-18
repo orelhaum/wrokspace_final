@@ -1,8 +1,8 @@
-//const { Configuracion } = require('../modules/configuracion');
+const { Configuracion } = require('../modules/configuracion');
 //let conf = new Configuracion('conf.json');
 
-/*
-const camposCoin={
+
+const camposHistorical={
   highPrice : "highPrice",
   prevClosePrice : "prevClosePrice",
   bidPrice : "bidPrice",
@@ -19,17 +19,32 @@ const camposCoin={
   symbol : "symbol",
   date:"date"
 }
-*/
 
-class CoinModel{
+class HistoricalModel{
   constructor(c){
-    //let conf = (c) ? c: new Configuracion('conf.json');
+    let conf = (c) ? c: new Configuracion('conf.json');
   }
 
   static generateModel(mongoose){
 
     let Schema = mongoose.Schema;
-    
+
+    /*"lowPrice": 6667.72,
+      "highPrice": 7550,
+      "prevClosePrice": 6696.13,
+      "bidPrice": 7422.43,
+      "openPrice": 6696.14,
+      "askPrice": 7424.38,
+      "priceChangePercent": 10.847,
+      "lastPrice": 7422.44,
+      "weightedAvgPrice": 7173.04248003,
+      "quoteVolume": 416070210.84032357,
+      "priceChange": 726.3,
+      "closeTime": 1531898626452,
+      "volume": 58004.704698,
+      "bidQty": 3,
+      "symbol": "BTCUSDT"
+      */
     let schema = new Schema({
       lowPrice:{
         type: Number
@@ -80,10 +95,10 @@ class CoinModel{
       fecha:{
         type: Date
       }
-    },{collection:'coin',versionKey: false });
+    },{collection:'historical',versionKey: false });
 
-    return mongoose.model('Coin',schema);
+    return mongoose.model('Historical',schema);
   }
 }
 
-module.exports = { CoinModel }
+module.exports = { HistoricalModel,camposHistorical }

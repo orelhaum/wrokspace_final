@@ -1,9 +1,9 @@
-const { Configuracion } = require('../modules/configuracion');
+//const { Configuracion } = require('../modules/configuracion');
 //let conf = new Configuracion('conf.json');
 
 class UserModel{
   constructor(c){
-    let conf = (c) ? c: new Configuracion('conf.json');
+    //let conf = (c) ? c: new Configuracion('conf.json');
   }
   static generateModel(mongoose){
 
@@ -62,14 +62,12 @@ class UserModel{
         type: Date
       },
       ventas : {
-        type: [{
-          moneda
-        }]
-      },
+        type: []
+      }
 
-    },{collection:'users',versionKey: false });
+    },{collection:'user',versionKey: false });
 
-    return mongoose.module('User',schema);
+    return mongoose.model('User',schema);
   }
   static createUser(req,callback){
 

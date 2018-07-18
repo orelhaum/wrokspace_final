@@ -36,10 +36,11 @@ class UpdateCoins {
         for (let coin of coins){
           this.sw.market(coin,(err,data)=>{
             this.db.setCoin(coin,data[0]);
-            /*
+            
             this.db.lenHistorical(coin,(err,longitud)=>{
+              console.log(`longitud de la moneda ${coin}:${longitud}`);
               if (longitud>=max_samples){
-                //console.log('numero maximo de muestras');
+                console.log('número maximo de muestras borrado ');
                 this.db.lpopHistorical(coin,(err)=>{
                   //console.log(err)
                 })
@@ -48,23 +49,17 @@ class UpdateCoins {
             this.db.rpushHistorical(coin,data[0],(err)=>{
               //console.log(err)
             });
-            //primero vemos el numero de uestras maximas para ir borrando
-            //this.db.setHistorical(coin,data[0]);
-            */
           })
         }
-        
-        
       })
       ;
       
-      /*
       //Pido los fondos al servidor y los guardo en Database
       this.sw.funds((err,funds)=>{
         //console.log(funds);
         this.db.setFunds(funds);
       })
-      */
+      
 /*
       //Pido el histórico del bitcoins y los guardo en database
       this.sw.historical('BTCUSDT',1,(err,data)=>{
