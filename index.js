@@ -13,7 +13,21 @@ const user={
   activado: false
 }
 
-//let db= new Database(conf).getDb();
+
+let o = new UpdateCoins(conf);
+//inicia el proceso de actualización de los archivos
+//o.start();
+o.now();
+
+
+/*
+let db= new Database(conf).getDb();
+db.getCoin('ETHBTC',(err,data)=>{
+  console.log('devuelto');
+  console.log(data);
+});
+*/
+
 /*
 db.getUsers((err,data)=>{
   console.log(data);
@@ -25,10 +39,7 @@ db.deleteUser('ramiro',(err,data)=>{
 });
 */
 
-let o = new UpdateCoins(conf);
-//inicia el proceso de actualización de los archivos
-//o.start();
-o.now();
+
 
 /*
 let db= new Database(conf).getDB();

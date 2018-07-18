@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const MongoClient = require('mongodb').MongoClient;
 
 const { UserModel } = require('../models/user');
+const { CoinsModel,CoinModel,camposCoin } = require('../models/coin');
 const { DatabaseBase } = require('./database_base');
 const { CONSTANTES_CONF } = require('./constantes');
 
@@ -26,60 +27,63 @@ class DatabaseMongo extends DatabaseBase {
     }
 
 
-/*
-    mongoose.connect(urlConnection,{ useNewUrlParser: true},function(err, client) {
-      this.client=client;
-    })
-    this.db = mongoose.connection;
-    //genera todos los modelos
-    UserModel.generateModel();
-*/
-    this.client=undefined;
+    mongoose.connect(urlConnection, { useNewUrlParser: true });
+    this.client= mongoose.connection;
 
-    MongoClient.connect(urlConnection, (err, client)=> {
-    
-      console.log("Connected correctly to server");
-      this.client=client;
-      /*
-      const db = client.db(this.database_mongo_dbname);
-    
-      // Insert a single document
-
-      db.collection(this.database_mongo_name).insertOne({a:'desde database'}, function(err, r) {
-        if (err) return console.log(err);
-        console.log('Insertado')
-        client.close();
-      });
-     */
-       
-    });
-
+    this.modelCoins=CoinsModel.generateModel(mongoose);
+    this.modelCoin=CoinModel.generateModel(mongoose);
   }
 
   setCoins(coins, callback) {
-    const data={
-      coins
-    }
-    console.log(this.client);
-    const db = this.client.db(this.database_mongo_dbname);
-    db.collection(this.database_mongo_name).insertOne({coins}, function(err, r) {
-      if (err) return console.log(err);
-      console.log('Insertado')
-      //client.close();
+    let monedas =  new this.modelCoins({coins});
+    monedas.save(function (err,monedas){
+      if (err) return console.error(err);
+
+      if (callback) callback();
     });
-    /*
-    this.col.insertOne(data, function(err, r) {
-      if (err) return console.log(err);
-      console.log('Insertado')
-      client.close();
-    });
-*/
-    if (callback) callback();
   }
 
-  close(callback) {
-    if (this.client.connected) this.client.quit();
-    if(callback) callback();
+  getCoins( callback) {
+    this.modelCoins.find(function (err, coins) {
+      if (err) return console.error(err);
+
+      if (callback) callback(err,coins);
+    });
+  }
+
+  setCoin(coin,dataCoin, callback) {
+    let datos={};
+
+      datos[camposCoin.highPrice]= dataCoin[camposCoin.highPrice]; 
+      datos[camposCoin.prevClosePrice]=dataCoin[camposCoin.prevClosePrice];
+      datos[camposCoin.bidPrice]=dataCoin[camposCoin.bidPrice];
+      datos[camposCoin.openPrice]=dataCoin[camposCoin.openPrice]; 
+      datos[camposCoin.askPrice]=dataCoin[camposCoin.askPrice];
+      datos[camposCoin.priceChangePercent ]=dataCoin[camposCoin.priceChangePercent];
+      datos[camposCoin.lastPrice]=dataCoin[camposCoin.lastPrice]; 
+      datos[camposCoin.weightedAvgPrice]=dataCoin[camposCoin.weightedAvgPrice]; 
+      datos[camposCoin.quoteVolume]=dataCoin[camposCoin.quoteVolume]; 
+      datos[camposCoin.priceChange]=dataCoin[camposCoin.priceChange]; 
+      datos[camposCoin.closeTime]=dataCoin[camposCoin.closeTime]; 
+      datos[camposCoin.volume]=dataCoin[camposCoin.volume]; 
+      datos[camposCoin.bidQty]=dataCoin[camposCoin.bidQty];
+      datos[camposCoin.symbol]=dataCoin[camposCoin.symbol]
+    
+    let moneda =  new this.modelCoin(datos);
+    
+    moneda.save(function (err,monedas){
+      if (err) return console.error(err);
+
+      if (callback) callback();
+    });
+  }
+
+  getCoin(coin, callback) {
+    this.modelCoin.find({symbol:coin},function (err, dataCoin) {
+      if (err) return console.error(err);
+
+      if (callback) callback(err,dataCoin);
+    });
   }
 }
 

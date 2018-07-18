@@ -32,11 +32,11 @@ class UpdateCoins {
         this.db.setCoins(coins);
         //console.log(monedas);
         //Pide información al servidor de todas las monedas
-        /*
+        
         for (let coin of coins){
           this.sw.market(coin,(err,data)=>{
             this.db.setCoin(coin,data[0]);
-            
+            /*
             this.db.lenHistorical(coin,(err,longitud)=>{
               if (longitud>=max_samples){
                 //console.log('numero maximo de muestras');
@@ -50,9 +50,10 @@ class UpdateCoins {
             });
             //primero vemos el numero de uestras maximas para ir borrando
             //this.db.setHistorical(coin,data[0]);
+            */
           })
         }
-        */
+        
         
       })
       ;
