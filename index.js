@@ -13,7 +13,7 @@ const user={
   activado: false
 }
 
-let db= new Database(conf).getDb();
+//let db= new Database(conf).getDb();
 /*
 db.getUsers((err,data)=>{
   console.log(data);

@@ -27,7 +27,8 @@ class UpdateCoins {
     
     const max_samples=parseInt(this.max_time_historical/this.periodicTime); //4 cuando estamos haciendolo, puede cambiar
     //pide el nombre de todas las monedas al servidor y lo guarda en database
-      this.sw.coins((err, coins) =>{
+      
+    this.sw.coins((err, coins) =>{
         this.db.setCoins(coins);
         //console.log(monedas);
         //Pide información al servidor de todas las monedas
@@ -53,7 +54,8 @@ class UpdateCoins {
         }
         */
         
-      });
+      })
+      ;
       
       /*
       //Pido los fondos al servidor y los guardo en Database
