@@ -1,74 +1,125 @@
 //const { Configuracion } = require('../modules/configuracion');
 //let conf = new Configuracion('conf.json');
+let validator = require('validator')
 
 class UserModel{
   constructor(c){
     //let conf = (c) ? c: new Configuracion('conf.json');
   }
-  static generateModel(mongoose){
+  static generateModel(mongoose) {
 
-    let Schema = mongoose.Schema;
-
-    let schema = new Schema({
-      usuario : {
-        type: String
+    let schema = new mongoose.Schema({
+      usuario: {
+        type: String,
+        required: [true, 'Usuario es obligatorio.'],
+        unique:[true,'No se puede utilizar el usuario {VALUE}, ya está en uso.']
       },
-      password : {
+      passwordSha: {
         type: String
       },
       realCash : {
         type: Number
       },
-      activado : {
+      activado: {
         type: Boolean
       },
-      tokenRegistro : {
+      tokenRegistro: {
         type: String
       },
       baneado : {
         type: Boolean
       },
-      email : {
+      email: {
+        type: String,
+        validate: {
+          validator: function(v) {
+            return validator.isEmail(v);
+          },
+          message: '{VALUE} no es un email válido!'
+        },
+        required: [true, 'Email requerido']
+      },
+      fechaNacimiento: {
+        type: Date,
+        validate: {
+          validator: function(v) {
+            console.log(v);
+            let fechaMayorEdad=new Date();
+            fechaMayorEdad.setYear(fechaMayorEdad.getFullYear()-18);
+            console.log(fechaMayorEdad);
+            return v>fechaMayorEdad; //validator.isAfter(v,fechaMayorEdad);
+          },
+          message: '{VALUE} no es mayor de 18 años!'
+        },
+        required: [true, 'Fecha nacimiento requerida']
+      },
+      lenguaje: {
         type: String
       },
-      fechaNacimiento : {
-        type: Date
-      },
-      lenguaje : {
-        type: String
-      },
-      prefijoTelefonoMovil : {
+      prefijoTelefonoMovil: {
         type: Number
       },
-      tipo : {
+      tipo: {
         type: String
       },
-      dni : {
+      dni: {
         type: String
       },
-      tarjetaVisa : {
+      tarjetaVisa: {
         type: Number
-      }  ,
-      dniFot : {
+      },
+      dniFoto: {
         type: String
       },
-      loginip : {
+      loginIp: {
         type: String
       },
-      registroIp : {
+      registroIp: {
         type: String
       },
-      fechaultimoLogin : {
+      registroIp: {
         type: Date
       },
-      ventas : {
-        type: []
+      ventas: {
+        type: [{
+          moneda: {
+            type: Number
+          },
+          cantidad: {
+            type: Number
+          },
+          precioMoneda: {
+            type: Number
+          },
+          date: {
+            type: Date
+          },
+        }]
+      },
+      compras: {
+        type: [{
+          moneda: {
+            type: Number
+          },
+          cantidad: {
+            type: Number
+          },
+          precioMoneda: {
+            type: Number
+          },
+          date: {
+            type: Date
+          },
+        }]
+      },
+      date: {
+        type: Date
       }
+    }, { collection: 'users', versionKey: false});
 
-    },{collection:'user',versionKey: false });
-
-    return mongoose.model('User',schema);
+    return mongoose.model('User', schema);
   }
+
   static createUser(req,callback){
 
     const db=req.variables.database;
@@ -80,9 +131,10 @@ class UserModel{
     const validationToken=cripto.stringRandom();
     
     let user={
-      usuario:req.body.usuario,
+      usuario:req.body.username,
       passwordSha:passwordSha,
-      email:req.body.email,
+      email:"req.body.email@gmail.com",
+      fechaNacimiento:"2015-05-06",
       activado:false,
       baneado:false,
       tipo:"registrado",
@@ -95,14 +147,15 @@ class UserModel{
       tokenRegistro:validationToken
     }
 
-    console.log(db);
-
     db.createUser(user,(err)=>{
+      console.log('creando usuario');
       const validationUrl=`http://localhost:8085/user/validate/${user.usuario}/${validationToken}`;
       console.log(validationUrl);
+      /*
       email.send(user.email,"Validación de Cuenta",validationUrl,(err,info)=>{
          callback(err);
-      })
+      })*/
+      callback(err);
     });
   }
 

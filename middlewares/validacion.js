@@ -1,12 +1,6 @@
 const validator = require('validator');
 
 const { Respuestas } = require('../modules/respuestas');
-const { Database } = require('../modules/database');
-const { Configuracion } = require('../modules/configuracion');
-
-const conf = new Configuracion('conf.json');
-
-const db = new Database(conf).getDb();
 
 class Validacion {
 

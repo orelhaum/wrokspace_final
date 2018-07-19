@@ -136,6 +136,24 @@ class DatabaseMongo extends DatabaseBase {
     });
   }
   
+
+  createUser(user, callback) {
+    console.log('Método createUser implementado');
+    this.modelUser.findOne({usuario: user.usuario}, (err, data)=> {
+      if (err) return callback(err); 
+      if(!data) {
+        console.log('No encontrado el usuario');
+        data= new this.modelUser(user);
+        data.date=new Date();
+      }
+      else data.set(user);
+      console.log(data);
+      data.save((err)=>{
+        if (err) return callback(err);
+        return callback();
+      });
+    });
+  }
 }
 
 module.exports = { DatabaseMongo }

@@ -17,14 +17,14 @@ const { Inicializacion } = require('./middlewares/inicializacion');
 
 
 //Importaciones de mis modelos
-const { UserModel } = require('./models/usuarios');
+const { UserModel } = require('./models/user');
 
 //Inicializo la Base de datos
 const conf = new Configuracion('conf.json');
 const db = new Database(conf).getDb();
 
 //inicialización de variables que van a durar todo el ciclo de vida de la petición
-const ini= new Inicializacion(conf);
+const ini= new Inicializacion(conf,db);
 
 //Variables globales de Express
 app.set('views',path.join(__dirname,'views'));
@@ -166,8 +166,10 @@ app.post('/msg/remove_all/', (req, res) =>{
 
 ///user/register
 app.post('/user/register', (req, res,next) =>{
+  console.log('dentro de register');
   UserModel.createUser(req ,(err)=>{
     if(err) return next(err);
+    console.log('todo bien');
     res.json(Respuestas.ok());
   });
 });
@@ -221,7 +223,15 @@ app.use(function (req, res, next) {
 app.use(function (err,req, res, next) {
   console.log('se ha producido un error:' + err);
   //si falla alguno internamente devovlemos el error 500
-  res.status(500).end(err);
+  //res.status(500).end(err);
+
+  res.status(500).json({
+    "ok":false,
+    "msg":err.message,
+    "code":404,
+    "data":[]
+  })
+
 })
 
 app.listen(8085);
